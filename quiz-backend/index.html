@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Quiz App</title>
+  </head>
+  <body>
+    <h1>Welcome to the Quiz App</h1>
+    <div id="quiz-container">
+      <!-- Quiz questions will be inserted here -->
+    </div>
+
+    <script>
+      // Fetch quiz data from the backend
+      fetch('/quiz')
+        .then((response) => response.json())
+        .then((data) => {
+          const quizContainer = document.getElementById('quiz-container');
+          data.forEach((question, index) => {
+            const questionElement = document.createElement('div');
+            questionElement.innerHTML = `
+              <p>Question ${index + 1}: ${question.question}</p>
+              <ul>
+                ${question.options
+                  .map((option) => `<li>${option}</li>`)
+                  .join('')}
+              </ul>
+            `;
+            quizContainer.appendChild(questionElement);
+          });
+        })
+        .catch((error) => console.error('Error loading quiz data:', error));
+    </script>
+  </body>
+</html>

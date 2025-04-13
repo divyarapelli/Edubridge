@@ -1,41 +1,27 @@
 import express from 'express';
-import cors from 'cors';  // Importing CORS to handle cross-origin requests
-import bodyParser from 'body-parser';
-
 const app = express();
+const port = 5000;
 
-// Enable CORS for the frontend (running on port 5174 in this case)
-app.use(cors({
-  origin: "http://localhost:5175", // The port your frontend is running on
-}));
+const quizzes = {
+  geography: [
+    { question: "What is the capital of France?", options: ["Paris", "Berlin", "London", "Rome"], answer: "Paris" },
+    { question: "Which ocean is the largest?", options: ["Pacific Ocean", "Atlantic Ocean", "Indian Ocean", "Arctic Ocean"], answer: "Pacific Ocean" }
+  ],
+  science: [
+    { question: "What is the chemical symbol for water?", options: ["H2O", "CO2", "O2", "N2"], answer: "H2O" },
+    { question: "What is the hardest natural substance?", options: ["Gold", "Iron", "Diamond", "Platinum"], answer: "Diamond" }
+  ],
+};
 
-// Parse incoming JSON requests
-app.use(bodyParser.json());
-
-// Handle POST requests to '/generateQuiz'
-app.post('/generateQuiz', (req, res) => {
-  const { topic, difficulty } = req.body;
-
-  // Generate static quiz data based on topic and difficulty (you can later enhance this to be dynamic)
-  const quizData = {
-    questions: [
-      {
-        question: "What is 2+2?",
-        options: ["3", "4", "5", "6"],
-        answer: "4",
-      },
-      {
-        question: "What is the capital of France?",
-        options: ["Berlin", "Madrid", "Paris", "London"],
-        answer: "Paris",
-      },
-    ],
-  };
-
-  res.json(quizData); // Send the generated quiz data back to the frontend
+app.get('/api/quiz/:topic', (req, res) => {
+  const topic = req.params.topic.toLowerCase();
+  if (quizzes[topic]) {
+    res.json(quizzes[topic]);
+  } else {
+    res.status(404).json({ message: 'Quiz not found for this topic' });
+  }
 });
 
-// Start the server on port 3000
-app.listen(5000, () => {
-  console.log("Server is running on http://localhost:5000");
+app.listen(port, () => {
+  console.log(`Server is running on port ${port}`);
 });
